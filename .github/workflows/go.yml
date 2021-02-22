@@ -34,17 +34,11 @@ jobs:
     - name: Build
       run: go build testproject
     - name: Test
-      run: go test testproject
+      run:  go test ./... -v
     - name: TestCover
       run: go test ./... -coverprofile=coverage.out
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
-      with:
-        args: >
-          -Dsonar.organization=guoshengcc
-          -Dsonar.projectKey=guoshengcc_testProjectOfGolang
-          -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.sources=.
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
