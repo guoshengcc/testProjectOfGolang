@@ -25,5 +25,9 @@ type FileEntity struct {
 // AddHeadMsg 向文件头添加信息
 func AddHeadMsg(fe FileEntity, msg string) error {
 	// TODO
+	// 参考：https://blog.csdn.net/sillyyijia/article/details/105425503
+	// 判断文件是否存在
+
+	// 向文件开始部分写入一段话，不进行覆盖
 	return nil
 }
