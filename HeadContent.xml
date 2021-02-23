@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<headcontent>
+    <!-- 
+    换行 (&#x000A;)    
+    空格 (&#x0020;) 
+    -->
+    <!-- 根据文件后缀名匹配并添加指定内容的headMsg，忽略大小写 -->
+    <categorizationbysuffixname>
+        <suffixname>go</suffixname>
+        <content><![CDATA[/* Copyright (c) 2021 Digital China Group Co.,Ltd
+        * Licensed under the GNU General Public License, Version 3.0 (the "License").
+        * You may not use this file except in compliance with the license.
+        * You may obtain a copy of the license at
+        *     https://www.gnu.org/licenses/
+        *
+        * This program is free; you can redistribute it and/or modify
+        * it under the terms of the GNU General Public License as published by
+        * the Free Software Foundation; version 3.0 of the License.
+        * This program is distributed in the hope that it will be useful,
+        * but WITHOUT ANY WARRANTY; without even the implied warranty of
+        * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        * GNU General Public License for more details.
+        **/
+
+        ]]>
+        </content>
+    </categorizationbysuffixname>
+    <categorizationbysuffixname>
+        <suffixname>cs</suffixname>
+        <content><![CDATA[Test-cs]]></content>
+    </categorizationbysuffixname>
+    <categorizationbysuffixname>
+        <suffixname>css</suffixname>
+        <content></content>
+    </categorizationbysuffixname>
+    <categorizationbysuffixname>
+        <suffixname>js</suffixname>
+        <content></content>
+    </categorizationbysuffixname>
+    <categorizationbysuffixname>
+        <suffixname>html</suffixname>
+        <content></content>
+    </categorizationbysuffixname>
+    <!-- 根据文件名匹配并添加指定内容的headMsg，大小写敏感-->
+    <categorizationbyfilename>
+        <filename>Jenkinsfile</filename>
+        <content></content>
+        <dockerfile></dockerfile>
+    </categorizationbyfilename>
+    <categorizationbyfilename>
+        <filename>dockerfile</filename>
+        <content></content>
+    </categorizationbyfilename>
+</headcontent>

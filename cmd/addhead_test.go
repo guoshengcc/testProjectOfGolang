@@ -1,29 +1,32 @@
 package cmd
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
-func TestAddHeadMsg(t *testing.T) {
-	// TODO
-	fe := FileEntity{
-		filePath: "C:/tmp/tidal.go",
-		fileType: GO,
-	}
-	msg := `// Copyright 2019 PingCAP, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// See the License for the specific language governing permissions and
-// limitations under the License.
+func TestGetAllFilePath(t *testing.T) {
+	dirPath := "C:\\tmp"
+	filePathArray, err := GetAllFilePath(dirPath, make([]FileBaseInfo, 0, 3))
 
-`
-	err := AddHeadMsg(fe, msg)
 	if err != nil {
 		t.Error(err)
+	}
+
+	// 4+3+2
+	if len(filePathArray) != 9 {
+		t.Error("错误")
+	}
+}
+
+func TestLoadHeadContentFormConfigXML(t *testing.T) {
+	headContent, err := loadHeadContentFormConfigXML()
+	if err != nil {
+		t.Error(err)
+	}
+	str := headContent.ContentCategorizationBySuffixname[0].Content
+	fmt.Print(str)
+	if len(str) < 10 {
+		t.Error("错误")
 	}
 }

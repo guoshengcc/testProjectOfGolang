@@ -4,34 +4,182 @@
 package cmd
 
 import (
+	"encoding/xml"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"strings"
 )
 
-// FileType 文件类型
-type FileType uint32
+// 指定配置文件的相对路径。
+// 该配置文件中记录了各种不同类型文件对应的不同前缀内容(headContent)
+var headContentConfigXMLPath = "../HeadContent.xml"
 
-// 枚举 各种文件类型
-const (
-	GO FileType = iota
-	CS
-	JS
-	CSS
-	YML
-	XML
-)
+// HeadContent 各种类型文件对应的不同前缀内容（head content）
+type HeadContent struct {
+	XMLName                           xml.Name                                `xml:"headcontent"`
+	ContentCategorizationBySuffixname []HeadContentCategorizationBySuffixname `xml:"categorizationbysuffixname"`
+	ContentCategorizationByFilename   []HeadContentCategorizationByFilename   `xml:"categorizationbyfilename"`
+}
 
-// FileEntity 文件的描述
-type FileEntity struct {
-	filePath string   // 文件绝对路径
-	fileType FileType // 文件类型
+// HeadContentCategorizationBySuffixname 根据文件后缀区分的前缀内容
+type HeadContentCategorizationBySuffixname struct {
+	Suffixname string `xml:"suffixname"`
+	Content    string `xml:"content"`
+}
+
+// HeadContentCategorizationByFilename 根据文件名区分的前缀内容
+type HeadContentCategorizationByFilename struct {
+	Filename string `xml:"filename"`
+	Content  string `xml:"content"`
+}
+
+// FileBaseInfo 文件的基本信息
+type FileBaseInfo struct {
+	FilePathStr string // 文件绝对路径
+	FileNameStr string // 文件类型
+}
+
+// loadHeadContentFormConfigXML 从配置文件中加载head content的配置信息
+func loadHeadContentFormConfigXML() (*HeadContent, error) {
+	finfo, err := os.Stat(headContentConfigXMLPath)
+	if err != nil {
+		return nil, err
+	}
+	if finfo.IsDir() {
+		return nil, fmt.Errorf("错误，变量['headContentConfigXMLPath':%s]应该为一个xml文件路径", headContentConfigXMLPath)
+	}
+
+	xmlFile, err := os.Open(headContentConfigXMLPath)
+	if err != nil {
+		return nil, err
+	}
+	defer xmlFile.Close()
+
+	xmlData, err := ioutil.ReadAll(xmlFile)
+	if err != nil {
+		return nil, err
+	}
+	headContent := HeadContent{}
+	err = xml.Unmarshal(xmlData, &headContent)
+	if err != nil {
+		return nil, err
+	}
+	return &headContent, nil
+}
+
+// GetHeadContentStr 根据文件类型获取其对应的前缀内容
+// 这个前缀内容存储在headContent中
+// 优先使用文件名进行匹配，文件名匹配不到再使用文件名后缀匹配，如果都匹配不到则返回空字符串
+// 文件名匹配区分大小写，文件名后缀匹配不区分大小写
+func GetHeadContentStr(fe FileBaseInfo, headContent *HeadContent) (string, error) {
+	// 优先匹配文件名
+	if headContent != nil &&
+		headContent.ContentCategorizationByFilename != nil &&
+		len(headContent.ContentCategorizationByFilename) > 0 {
+		for _, fn := range headContent.ContentCategorizationByFilename {
+			if fe.FileNameStr == fn.Filename {
+				return fn.Content, nil
+			}
+		}
+	}
+
+	// 文件名匹配不到，再通过文件后缀匹配
+	if headContent != nil &&
+		headContent.ContentCategorizationBySuffixname != nil &&
+		len(headContent.ContentCategorizationBySuffixname) > 0 {
+		fileNameSplitArray := strings.Split(fe.FileNameStr, ".")
+		if len(fileNameSplitArray) < 1 {
+			return "", nil
+		}
+		fileNameSuffix := fileNameSplitArray[len(fileNameSplitArray)-1]
+		for _, fsn := range headContent.ContentCategorizationBySuffixname {
+			if strings.EqualFold(fileNameSuffix, fsn.Suffixname) {
+				return fsn.Content, nil
+			}
+		}
+	}
+
+	return "", nil
+}
+
+// Run 按照配置内容，将前缀内容添加到指定目录中的所有文件中
+func Run(dirPath string) error {
+	// 读取所有的文件
+	fileBaseInfos, err := GetAllFilePath(dirPath, make([]FileBaseInfo, 0, 3))
+	if err != nil {
+		return err
+	}
+
+	if len(fileBaseInfos) < 1 {
+		return nil
+	}
+
+	allHeadContent, err := loadHeadContentFormConfigXML()
+	if err != nil {
+		return err
+	}
+
+	for _, fbi := range fileBaseInfos {
+		headContentStr, err := GetHeadContentStr(fbi, allHeadContent)
+		if err != nil {
+			return err
+		}
+		// 向各个文件中添加前缀内容(head  Content)
+		err1 := AddHeadMsg(fbi, headContentStr)
+		if err1 != nil {
+			return err1
+		}
+	}
+
+	return nil
+}
+
+// GetAllFilePath 获取指定目录下面的所有文件路径
+func GetAllFilePath(dirPath string, fileBaseInfos []FileBaseInfo) ([]FileBaseInfo, error) {
+	if fileBaseInfos == nil {
+		return nil, fmt.Errorf("入参变量filePath []fileBaseInfos 没有初始化")
+	}
+
+	finfo, err := os.Stat(dirPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if !finfo.IsDir() {
+		return nil, fmt.Errorf("错误，变量['dirPath':%s]应该为一个目录路径", headContentConfigXMLPath)
+	}
+
+	files, err := ioutil.ReadDir(dirPath)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, file := range files {
+		if file.IsDir() {
+			// 递归获取子目录中的文件信息
+			subDirFileBaseInfos, err := GetAllFilePath(dirPath+string(os.PathSeparator)+file.Name(), fileBaseInfos)
+			if err != nil {
+				return fileBaseInfos, err
+			}
+			fileBaseInfos = append(fileBaseInfos, subDirFileBaseInfos...)
+		} else {
+			fbi := FileBaseInfo{
+				FilePathStr: dirPath + string(os.PathSeparator) + file.Name(),
+				FileNameStr: file.Name(),
+			}
+			fileBaseInfos = append(fileBaseInfos, fbi)
+		}
+	}
+
+	return fileBaseInfos, nil
 }
 
 // AddHeadMsg 向文件头添加信息
 // 只针对UTF-8项目
-func AddHeadMsg(fe FileEntity, msg string) error {
+func AddHeadMsg(fe FileBaseInfo, msg string) error {
 	// 读取目标文件
-	fileObj, err := os.Open(fe.filePath) // ./hello.txt
+	fileObj, err := os.Open(fe.FilePathStr) // ./hello.txt
 	if err != nil {
 		fmt.Printf("open file filed ,err :%v", err)
 		return err
@@ -63,7 +211,7 @@ func AddHeadMsg(fe FileEntity, msg string) error {
 		if n < 128 {
 			fileObj.Close()
 			tempObj.Close()
-			err := os.Rename("./temp.temp", fe.filePath)
+			err := os.Rename("./temp.temp", fe.FilePathStr)
 			if err != nil {
 				fmt.Printf("rename file filed,err:%v", err)
 				return err
