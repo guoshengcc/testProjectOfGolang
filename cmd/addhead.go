@@ -18,6 +18,7 @@ var headContentConfigXMLPath = "../HeadContent.xml"
 // HeadContent 各种类型文件对应的不同前缀内容（head content）
 type HeadContent struct {
 	XMLName                           xml.Name                                `xml:"headcontent"`
+	Ignore                            []string                                `xml:"ignore"`
 	ContentCategorizationBySuffixname []HeadContentCategorizationBySuffixname `xml:"categorizationbysuffixname"`
 	ContentCategorizationByFilename   []HeadContentCategorizationByFilename   `xml:"categorizationbyfilename"`
 }
@@ -38,6 +39,23 @@ type HeadContentCategorizationByFilename struct {
 type FileBaseInfo struct {
 	FilePathStr string // 文件绝对路径
 	FileNameStr string // 文件类型
+}
+
+// IsIgnore 根据文件/目录名称判断其是否应该忽略
+// 返回值中true-应该忽略，false-不该忽略
+func (headContent *HeadContent) IsIgnore(name string) bool {
+	if headContent.Ignore == nil ||
+		len(headContent.Ignore) < 1 {
+		return false
+	}
+
+	for _, ig := range headContent.Ignore {
+		if ig == name {
+			return true
+		}
+	}
+
+	return false
 }
 
 // loadHeadContentFormConfigXML 从配置文件中加载head content的配置信息
@@ -105,8 +123,13 @@ func GetHeadContentStr(fe FileBaseInfo, headContent *HeadContent) (string, error
 
 // Run 按照配置内容，将前缀内容添加到指定目录中的所有文件中
 func Run(dirPath string) error {
+	// 读取配置
+	allHeadContent, err := loadHeadContentFormConfigXML()
+	if err != nil {
+		return err
+	}
 	// 读取所有的文件
-	fileBaseInfos, err := GetAllFilePath(dirPath, make([]FileBaseInfo, 0, 3))
+	fileBaseInfos, err := GetAllFilePath(dirPath, allHeadContent.Ignore)
 	if err != nil {
 		return err
 	}
@@ -115,15 +138,16 @@ func Run(dirPath string) error {
 		return nil
 	}
 
-	allHeadContent, err := loadHeadContentFormConfigXML()
-	if err != nil {
-		return err
-	}
-
 	for _, fbi := range fileBaseInfos {
+		if allHeadContent.IsIgnore(fbi.FileNameStr) {
+			continue
+		}
 		headContentStr, err := GetHeadContentStr(fbi, allHeadContent)
 		if err != nil {
 			return err
+		}
+		if len(headContentStr) < 1 {
+			continue
 		}
 		// 向各个文件中添加前缀内容(head  Content)
 		err1 := AddHeadMsg(fbi, headContentStr)
@@ -136,10 +160,8 @@ func Run(dirPath string) error {
 }
 
 // GetAllFilePath 获取指定目录下面的所有文件路径
-func GetAllFilePath(dirPath string, fileBaseInfos []FileBaseInfo) ([]FileBaseInfo, error) {
-	if fileBaseInfos == nil {
-		return nil, fmt.Errorf("入参变量filePath []fileBaseInfos 没有初始化")
-	}
+func GetAllFilePath(dirPath string, ignores []string) ([]FileBaseInfo, error) {
+	fileBaseInfos := make([]FileBaseInfo, 0, 3)
 
 	finfo, err := os.Stat(dirPath)
 	if err != nil {
@@ -156,9 +178,23 @@ func GetAllFilePath(dirPath string, fileBaseInfos []FileBaseInfo) ([]FileBaseInf
 	}
 
 	for _, file := range files {
+		// 跳过需要忽略的文件/目录
+		isIgnore := false
+		if ignores != nil && len(ignores) > 0 {
+			for _, ig := range ignores {
+				if file.Name() == ig {
+					isIgnore = true
+					break
+				}
+			}
+		}
+		if isIgnore {
+			continue
+		}
+
 		if file.IsDir() {
 			// 递归获取子目录中的文件信息
-			subDirFileBaseInfos, err := GetAllFilePath(dirPath+string(os.PathSeparator)+file.Name(), fileBaseInfos)
+			subDirFileBaseInfos, err := GetAllFilePath(dirPath+string(os.PathSeparator)+file.Name(), ignores)
 			if err != nil {
 				return fileBaseInfos, err
 			}
