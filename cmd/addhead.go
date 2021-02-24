@@ -54,6 +54,42 @@ func (headContent *HeadContent) IsIgnore(name string) bool {
 	return false
 }
 
+// GetHeadContentByFileName 通过文件名称来获取对应的前缀内容
+// 使用文件名称匹配时大小写敏感
+func (headContent *HeadContent) GetHeadContentByFileName(fileName string) string {
+	if fileName == "" ||
+		headContent.ContentCategorizationByFilename == nil ||
+		len(headContent.ContentCategorizationByFilename) < 1 {
+		return ""
+	}
+
+	for _, fn := range headContent.ContentCategorizationByFilename {
+		if fileName == fn.Filename {
+			return fn.Content
+		}
+	}
+
+	return ""
+}
+
+// GetHeadContentBySuffixName 通过文件后缀名获取对应的前缀内容
+// 使用文件后缀名匹配时不区分大小写
+func (headContent *HeadContent) GetHeadContentBySuffixName(suffixname string) string {
+	if suffixname == "" ||
+		headContent.ContentCategorizationBySuffixname == nil ||
+		len(headContent.ContentCategorizationBySuffixname) < 1 {
+		return ""
+	}
+
+	for _, fsn := range headContent.ContentCategorizationBySuffixname {
+		if strings.EqualFold(suffixname, fsn.Suffixname) {
+			return fsn.Content
+		}
+	}
+
+	return ""
+}
+
 // loadHeadContentFormConfigXML 从配置文件中加载head content的配置信息
 // headContentConfigXMLPath,指定配置文件的相对路径。
 // 该配置文件中记录了各种不同类型文件对应的不同前缀内容(headContent)
@@ -89,34 +125,22 @@ func loadHeadContentFormConfigXML(headContentConfigXMLPath string) (*HeadContent
 // 优先使用文件名进行匹配，文件名匹配不到再使用文件名后缀匹配，如果都匹配不到则返回空字符串
 // 文件名匹配区分大小写，文件名后缀匹配不区分大小写
 func GetHeadContentStr(fe FileBaseInfo, headContent *HeadContent) (string, error) {
-	// 优先匹配文件名
-	if headContent != nil &&
-		headContent.ContentCategorizationByFilename != nil &&
-		len(headContent.ContentCategorizationByFilename) > 0 {
-		for _, fn := range headContent.ContentCategorizationByFilename {
-			if fe.FileNameStr == fn.Filename {
-				return fn.Content, nil
-			}
-		}
+
+	if headContent == nil {
+		return "", fmt.Errorf("'headContent' no init")
 	}
+	// 优先使用文件名匹配
+	headContentStr := headContent.GetHeadContentByFileName(fe.FileNameStr)
 
 	// 文件名匹配不到，再通过文件后缀匹配
-	if headContent != nil &&
-		headContent.ContentCategorizationBySuffixname != nil &&
-		len(headContent.ContentCategorizationBySuffixname) > 0 {
-		fileNameSplitArray := strings.Split(fe.FileNameStr, ".")
-		if len(fileNameSplitArray) < 1 {
-			return "", nil
-		}
+	fileNameSplitArray := strings.Split(fe.FileNameStr, ".")
+	if headContentStr == "" && len(fileNameSplitArray) > 0 {
 		fileNameSuffix := fileNameSplitArray[len(fileNameSplitArray)-1]
-		for _, fsn := range headContent.ContentCategorizationBySuffixname {
-			if strings.EqualFold(fileNameSuffix, fsn.Suffixname) {
-				return fsn.Content, nil
-			}
-		}
+		headContentStr = headContent.GetHeadContentBySuffixName(fileNameSuffix)
 	}
 
-	return "", nil
+	// 都匹配不到时，返回空字符串
+	return headContentStr, nil
 }
 
 // Run 按照配置内容，将前缀内容添加到指定目录中的所有文件中
