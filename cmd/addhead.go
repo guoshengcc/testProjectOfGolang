@@ -184,6 +184,22 @@ func Run(dirPath string, configXMLPath string) error {
 	return nil
 }
 
+// isContain 判断一个字符串数组中是否包含字符串元素s，大小写敏感
+// return true：包含，false：不包含
+func isContain(arr []string, s string) bool {
+	if arr == nil || len(arr) < 1 {
+		return false
+	}
+
+	for _, a := range arr {
+		if a == s {
+			return true
+		}
+	}
+
+	return false
+}
+
 // GetAllFilePath 获取指定目录下面的所有文件路径
 func GetAllFilePath(dirPath string, ignores []string) ([]FileBaseInfo, error) {
 	fileBaseInfos := make([]FileBaseInfo, 0, 3)
@@ -204,16 +220,7 @@ func GetAllFilePath(dirPath string, ignores []string) ([]FileBaseInfo, error) {
 
 	for _, file := range files {
 		// 跳过需要忽略的文件/目录
-		isIgnore := false
-		if ignores != nil && len(ignores) > 0 {
-			for _, ig := range ignores {
-				if file.Name() == ig {
-					isIgnore = true
-					break
-				}
-			}
-		}
-		if isIgnore {
+		if isContain(ignores, file.Name()) {
 			continue
 		}
 
