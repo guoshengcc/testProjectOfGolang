@@ -6,6 +6,7 @@ package cmd
 import (
 	"encoding/xml"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -173,7 +174,7 @@ func Run(dirPath string, configXMLPath string) error {
 			continue
 		}
 
-		fmt.Printf("Begin %d:", counter)
+		fmt.Printf("Begin %d:%s", counter, fbi.FilePathStr)
 		// 向各个文件中添加前缀内容(head  Content)
 		err1 := AddHeadMsg(fbi, headContentStr)
 		if err1 != nil {
@@ -264,10 +265,10 @@ func AddHeadMsg(fe FileBaseInfo, msg string) error {
 		fmt.Printf("write file filed ,err:%v", err)
 		return err2
 	}
-	var temp [128]byte
+	temp := make([]byte, 128)
 	for {
-		n, err := fileObj.Read(temp[:])
-		if err != nil {
+		n, err := fileObj.Read(temp)
+		if err != nil && err != io.EOF {
 			fmt.Printf("read file filed ,err :%v", err)
 			return err
 		}
@@ -284,7 +285,7 @@ func AddHeadMsg(fe FileBaseInfo, msg string) error {
 				fmt.Printf("rename file filed,err:%v", err)
 				return err
 			}
-			fmt.Printf("%s add head content finished!\n", fe.FilePathStr)
+			fmt.Print("\t------Add head content finished!\n")
 			return nil
 		}
 	}
