@@ -25,7 +25,7 @@
  * GNU General Public License for more details.
 **/
 
-    ]]></content>
+]]></content>
     </categorizationbysuffixname>
     <categorizationbysuffixname>
         <suffixname>cs</suffixname>
@@ -44,7 +44,7 @@
  * GNU General Public License for more details.
 **/
 
-    ]]></content>
+]]></content>
     </categorizationbysuffixname>
     <categorizationbysuffixname>
         <suffixname>css</suffixname>
@@ -63,7 +63,7 @@
  * GNU General Public License for more details.
 **/
 
-    ]]></content>
+]]></content>
     </categorizationbysuffixname>
     <categorizationbysuffixname>
         <suffixname>js</suffixname>
@@ -82,7 +82,7 @@
  * GNU General Public License for more details.
 **/
 
-    ]]></content>
+]]></content>
     </categorizationbysuffixname>
     <categorizationbysuffixname>
         <suffixname>html</suffixname>
@@ -102,7 +102,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 -->
 
-    ]]></content>
+]]></content>
     </categorizationbysuffixname>
     <categorizationbysuffixname>
         <suffixname>yml</suffixname>
@@ -120,7 +120,7 @@ GNU General Public License for more details.
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-    ]]></content>
+]]></content>
     </categorizationbysuffixname>
     <categorizationbysuffixname>
         <suffixname>yaml</suffixname>
@@ -138,7 +138,7 @@ GNU General Public License for more details.
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-    ]]></content>
+]]></content>
     </categorizationbysuffixname>
     <!-- 根据文件名匹配并添加指定内容的headMsg，大小写敏感-->
     <categorizationbyfilename>
@@ -158,7 +158,7 @@ GNU General Public License for more details.
  * GNU General Public License for more details.
 **/
 
-    ]]></content>
+]]></content>
     </categorizationbyfilename>
     <categorizationbyfilename>
         <filename>Dockerfile</filename>
@@ -176,6 +176,6 @@ GNU General Public License for more details.
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-    ]]></content>
+]]></content>
     </categorizationbyfilename>
 </headcontent>

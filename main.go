@@ -7,7 +7,7 @@ import (
 
 func main() {
 	// fmt.Println("Hi")
-	err := cmd.Run("C:\\GitHub\\gomock")
+	err := cmd.Run("C:\\GitHub\\gomock", "./HeadContent.xml")
 	if err != nil {
 		fmt.Println(err)
 	} else {
