@@ -19,6 +19,8 @@ GNU General Public License for more details.
     <!-- 忽略文件/目录 全名匹配 大小写敏感 -->
     <ignore>.git</ignore>
     <ignore>.github</ignore>
+    <ignore>.idea</ignore>
+    <ignore>.vscode</ignore>
     <!-- 
     换行 (&#x000A;)    
     空格 (&#x0020;) 
@@ -26,6 +28,25 @@ GNU General Public License for more details.
     <!-- 根据文件后缀名匹配并添加指定内容的headMsg，忽略大小写 -->
     <categorizationbysuffixname>
         <suffixname>go</suffixname>
+        <content><![CDATA[/* Copyright (c) 2021 Digital China Group Co.,Ltd
+ * Licensed under the GNU General Public License, Version 3.0 (the "License").
+ * You may not use this file except in compliance with the license.
+ * You may obtain a copy of the license at
+ *     https://www.gnu.org/licenses/
+ *
+ * This program is free; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 3.0 of the License.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+**/
+
+]]></content>
+    </categorizationbysuffixname>
+    <categorizationbysuffixname>
+        <suffixname>sql</suffixname>
         <content><![CDATA[/* Copyright (c) 2021 Digital China Group Co.,Ltd
  * Licensed under the GNU General Public License, Version 3.0 (the "License").
  * You may not use this file except in compliance with the license.
@@ -141,6 +162,26 @@ GNU General Public License for more details.
 ]]></content>
     </categorizationbysuffixname>
     <categorizationbysuffixname>
+        <suffixname>xsd</suffixname>
+        <content><![CDATA[<!--
+Copyright (c) 2021 Digital China Group Co.,Ltd
+Licensed under the GNU General Public License, Version 3.0 (the "License").
+You may not use this file except in compliance with the license.
+You may obtain a copy of the license at
+    https://www.gnu.org/licenses/
+
+This program is free; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; version 3.0 of the License.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+-->
+
+]]></content>
+    </categorizationbysuffixname>
+    <categorizationbysuffixname>
         <suffixname>yml</suffixname>
         <content><![CDATA[# Copyright (c) 2021 Digital China Group Co.,Ltd
 # Licensed under the GNU General Public License, Version 3.0 (the "License").
@@ -198,6 +239,60 @@ GNU General Public License for more details.
     </categorizationbyfilename>
     <categorizationbyfilename>
         <filename>Dockerfile</filename>
+        <content><![CDATA[# Copyright (c) 2021 Digital China Group Co.,Ltd
+# Licensed under the GNU General Public License, Version 3.0 (the "License").
+# You may not use this file except in compliance with the license.
+# You may obtain a copy of the license at
+#     https://www.gnu.org/licenses/
+#
+# This program is free; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 3.0 of the License.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+]]></content>
+    </categorizationbyfilename>
+    <categorizationbyfilename>
+        <filename>dockerfile</filename>
+        <content><![CDATA[# Copyright (c) 2021 Digital China Group Co.,Ltd
+# Licensed under the GNU General Public License, Version 3.0 (the "License").
+# You may not use this file except in compliance with the license.
+# You may obtain a copy of the license at
+#     https://www.gnu.org/licenses/
+#
+# This program is free; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 3.0 of the License.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+]]></content>
+    </categorizationbyfilename>
+    <categorizationbyfilename>
+        <filename>dockerfile-agent</filename>
+        <content><![CDATA[# Copyright (c) 2021 Digital China Group Co.,Ltd
+# Licensed under the GNU General Public License, Version 3.0 (the "License").
+# You may not use this file except in compliance with the license.
+# You may obtain a copy of the license at
+#     https://www.gnu.org/licenses/
+#
+# This program is free; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 3.0 of the License.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+]]></content>
+    </categorizationbyfilename>
+    <categorizationbyfilename>
+        <filename>dockerfile-kernel</filename>
         <content><![CDATA[# Copyright (c) 2021 Digital China Group Co.,Ltd
 # Licensed under the GNU General Public License, Version 3.0 (the "License").
 # You may not use this file except in compliance with the license.
